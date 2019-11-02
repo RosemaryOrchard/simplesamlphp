@@ -95,6 +95,7 @@ jobs:
     ###################
 
     - stage: quality
+      php: 7.3
       env: Security check (composer install)
       before_script:
         - composer install
@@ -102,6 +103,7 @@ jobs:
         - vendor/bin/security-checker security:check
 
     - stage: quality
+      php: 7.3
       env: Security check (composer update)
       before_script:
         - composer update
@@ -109,7 +111,7 @@ jobs:
         - vendor/bin/security-checker security:check
 
     - stage: quality
-      php: 7.2
+      php: 7.3
       env: Codecov
       before_script:
         - composer update
@@ -123,6 +125,7 @@ jobs:
         # - <(curl -s https://codecov.io/bash)
 
     - stage: quality
+      php: 7.3
       env: Psalm
       before_script:
         - composer update
@@ -130,6 +133,7 @@ jobs:
         - vendor/bin/psalm
 
     - stage: quality
+      php: 7.3
       env: PHP Codesniffer
       before_script:
         - composer update
