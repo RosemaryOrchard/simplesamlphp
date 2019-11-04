@@ -115,7 +115,7 @@ class TestController
      * @param \SAML2\XML\saml\NameID $nameId
      * @return string
      */
-    private function getNameIDHTML(Template $t, NameID $nameId)
+    private function getNameIDHTML(Template $t, NameID $nameId): string
     {
         $translator = $t->getTranslator();
         $result = '';
@@ -153,7 +153,7 @@ class TestController
      * @param string $nameParent
      * @return string
      */
-    private function getAttributesHTML(Template $t, $attributes, $nameParent)
+    private function getAttributesHTML(Template $t, array $attributes, string $nameParent): string
     {
         $alternate = ['pure-table-odd', 'pure-table-even'];
         $i = 0;
@@ -231,7 +231,7 @@ class TestController
      * @param array|string $attr
      * @return string
      */
-    private function presentList($attr)
+    private function presentList($attr): string
     {
         if (is_array($attr) && count($attr) > 1) {
             $str = '<ul>';
@@ -250,7 +250,7 @@ class TestController
      * @param array|string $attr
      * @return string
      */
-    private function presentAssoc($attr)
+    private function presentAssoc($attr): string
     {
         if (is_array($attr)) {
             $str = '<dl>';
@@ -270,7 +270,7 @@ class TestController
      * @param \SAML2\XML\saml\NameID $nameID
      * @return string
      */
-    private function presentEptid(Translate $t, NameID $nameID)
+    private function presentEptid(Translate $t, NameID $nameID): string
     {
         $eptid = [
             'NameID' => [$nameID->getValue()],
