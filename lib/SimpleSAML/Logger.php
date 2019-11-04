@@ -462,11 +462,11 @@ class Logger
 
     /**
      * @param int $level
-     * @param string|array $string
+     * @param string $string
      * @param bool $statsLog
      * @return void
      */
-    private static function log(int $level, $string, bool $statsLog = false)
+    private static function log(int $level, string $string, bool $statsLog = false)
     {
         if (self::$initializing) {
             // some error occurred while initializing logging
@@ -494,10 +494,6 @@ class Logger
         }
 
         if (self::$logLevel >= $level || $statsLog) {
-            if (is_array($string)) {
-                $string = implode(",", $string);
-            }
-
             $formats = ['%trackid', '%msg', '%srcip', '%stat'];
             $replacements = [self::$trackid, $string, $_SERVER['REMOTE_ADDR']];
 
