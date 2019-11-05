@@ -360,6 +360,7 @@ class SAML2
                 );
             }
 
+            /** @psalm-var null|string|\SAML2\XML\saml\Issuer $issuer   Remove in SSP 2.0 */
             $issuer = $request->getIssuer();
             if ($issuer === null) {
                 throw new Error\BadRequest(
