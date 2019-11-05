@@ -197,7 +197,7 @@ class ValidatorTest extends SigningTestCase
      */
     public function testIsNodeValidatedFailure()
     {
-        $doc = DOMDocumentFactory();
+        $doc = DOMDocumentFactory::create();
         $doc->loadXML('<?xml version="1.0"?><parent><node1>value1</node1><node2>value2</node2></parent>');
 
         /** @psalm-var DOMElement $node1 */

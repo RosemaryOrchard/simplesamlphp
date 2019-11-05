@@ -130,7 +130,7 @@ NOWDOC;
         /** @psalm-var \DOMDocument $element */
         $element = $node->getElementsByTagName("node")->item(0);
 
-        $doc = DOMDocumentFactory();
+        $doc = DOMDocumentFactory::create();
         $insertInto = $doc->appendChild(new DOMElement('insert'));
 
         $signer = new Signer([]);
@@ -154,7 +154,7 @@ NOWDOC;
     {
         $this->other_certificate_file = $this->certdir . DIRECTORY_SEPARATOR . self::OTHER_CERTIFICATE;
 
-        $node = DOMDocumentFactory();
+        $node = DOMDocumentFactory::create();
         $node->loadXML('<?xml version="1.0"?><node>value</node>');
 
         /** @psalm-var \DOMDocument $element */
@@ -185,7 +185,7 @@ NOWDOC;
      */
     public function testSignMissingPrivateKey()
     {
-        $node = DOMDocumentFactory();
+        $node = DOMDocumentFactory::create();
         $node->loadXML('<?xml version="1.0"?><node>value</node>');
 
         /** @psalm-var \DOMDocument $element */
