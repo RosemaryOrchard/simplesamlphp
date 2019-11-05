@@ -86,7 +86,7 @@ NOWDOC;
         $node = DOMDocumentFactory::create();
         $node->loadXML('<?xml version="1.0"?><node>value</node>');
 
-        /** @psalm-var \DOMDocument $element */
+        /** @psalm-var DOMElement $element */
         $element = $node->getElementsByTagName("node")->item(0);
 
         $doc = DOMDocumentFactory::create();
@@ -127,7 +127,7 @@ NOWDOC;
         $node = DOMDocumentFactory::create();
         $node->loadXML('<?xml version="1.0"?><node>value</node>');
 
-        /** @psalm-var \DOMDocument $element */
+        /** @psalm-var DOMElement $element */
         $element = $node->getElementsByTagName("node")->item(0);
 
         $doc = DOMDocumentFactory::create();
@@ -157,7 +157,7 @@ NOWDOC;
         $node = DOMDocumentFactory::create();
         $node->loadXML('<?xml version="1.0"?><node>value</node>');
 
-        /** @psalm-var \DOMDocument $element */
+        /** @psalm-var DOMElement $element */
         $element = $node->getElementsByTagName("node")->item(0);
 
         $doc = DOMDocumentFactory::create();
@@ -188,7 +188,7 @@ NOWDOC;
         $node = DOMDocumentFactory::create();
         $node->loadXML('<?xml version="1.0"?><node>value</node>');
 
-        /** @psalm-var \DOMDocument $element */
+        /** @psalm-var DOMElement $element */
         $element = $node->getElementsByTagName("node")->item(0);
 
         $doc = DOMDocumentFactory::create();

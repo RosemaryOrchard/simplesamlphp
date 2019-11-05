@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Test\XML;
 
+use DOMElement;
 use org\bovigo\vfs\vfsStream;
 use PHPUnit\Framework\TestCase;
 use SAML2\DOMDocumentFactory;
