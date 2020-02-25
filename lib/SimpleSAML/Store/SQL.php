@@ -305,8 +305,7 @@ class SQL extends Store
             $key = sha1($key);
         }
 
-        $query = 'SELECT _value FROM ' . $this->prefix .
-            '_kvstore WHERE _type = :type AND _key = :key AND (_expire IS NULL OR _expire > :now)';
+        $query = 'SELECT _value FROM ' . $this->createTableName('_kvstore') .' WHERE _type = :type AND _key = :key AND (_expire IS NULL OR _expire > :now)';
         $params = ['type' => $type, 'key' => $key, 'now' => gmdate('Y-m-d H:i:s')];
 
         $query = $this->pdo->prepare($query);
@@ -366,7 +365,7 @@ class SQL extends Store
             '_expire' => $expire,
         ];
 
-        $this->insertOrUpdate($this->prefix . '_kvstore', ['_type', '_key'], $data);
+        $this->insertOrUpdate($this->createTableName('_kvstore'), ['_type', '_key'], $data);
     }
 
 
@@ -388,8 +387,13 @@ class SQL extends Store
             '_key'  => $key,
         ];
 
-        $query = 'DELETE FROM ' . $this->prefix . '_kvstore WHERE _type=:_type AND _key=:_key';
+        $query = 'DELETE FROM ' . $this->createTableName('_kvstore') . ' WHERE _type=:_type AND _key=:_key';
         $query = $this->pdo->prepare($query);
         $query->execute($data);
+    }
+
+    private function createTableName(string $name): string
+    {
+        return $this->prefix . $name;
     }
 }
