@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\core\Auth\Process;
 
 use SimpleSAML\Error;
 use SimpleSAML\Logger;
+use Webmozart\Assert\Assert;
 
 /**
  * Filter to create target attribute based on value(s) in source attribute
@@ -51,11 +54,9 @@ class AttributeValueMap extends \SimpleSAML\Auth\ProcessingFilter
      * @param mixed $reserved For future use.
      * @throws \SimpleSAML\Error\Exception If the configuration is not valid.
      */
-    public function __construct(&$config, $reserved)
+    public function __construct(array &$config, $reserved)
     {
         parent::__construct($config, $reserved);
-
-        assert(is_array($config));
 
         // parse configuration
         foreach ($config as $name => $value) {
@@ -109,12 +110,11 @@ class AttributeValueMap extends \SimpleSAML\Auth\ProcessingFilter
      * @param array &$request The current request
      * @return void
      */
-    public function process(&$request)
+    public function process(array &$request): void
     {
         Logger::debug('Processing the AttributeValueMap filter.');
 
-        assert(is_array($request));
-        assert(array_key_exists('Attributes', $request));
+        Assert::keyExists($request, 'Attributes');
         $attributes = &$request['Attributes'];
 
         if (!array_key_exists($this->sourceattribute, $attributes)) {

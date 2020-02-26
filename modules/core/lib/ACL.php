@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\core;
 
 use SimpleSAML\Configuration;
 use SimpleSAML\Error;
+use Webmozart\Assert\Assert;
 
 /**
  * Generic library for access control lists.
@@ -20,6 +23,7 @@ class ACL
      */
     private $acl;
 
+
     /**
      * Initializer for this access control list.
      *
@@ -27,7 +31,7 @@ class ACL
      */
     public function __construct($acl)
     {
-        assert(is_string($acl) || is_array($acl));
+        Assert::true(is_string($acl) || is_array($acl));
 
         if (is_string($acl)) {
             $acl = self::getById($acl);
@@ -57,10 +61,8 @@ class ACL
      * @param string $id  The id of the access control list.
      * @return array  The access control list array.
      */
-    private static function getById($id)
+    private static function getById(string $id): array
     {
-        assert(is_string($id));
-
         $config = Configuration::getOptionalConfig('acl.php');
         if (!$config->hasValue($id)) {
             throw new Error\Exception('No ACL with id ' . var_export($id, true) . ' in config/acl.php.');
@@ -69,13 +71,14 @@ class ACL
         return $config->getArray($id);
     }
 
+
     /**
      * Match the attributes against the access control list.
      *
      * @param array $attributes  The attributes of an user.
      * @return boolean  TRUE if the user is allowed to access the resource, FALSE if not.
      */
-    public function allows(array $attributes)
+    public function allows(array $attributes): bool
     {
         foreach ($this->acl as $rule) {
             $action = array_shift($rule);
@@ -93,6 +96,7 @@ class ACL
         return false;
     }
 
+
     /**
      * Match the attributes against the given rule.
      *
@@ -100,7 +104,7 @@ class ACL
      * @param array $rule  The rule we should check.
      * @return boolean  TRUE if the rule matches, FALSE if not.
      */
-    private static function match(array $attributes, array $rule)
+    private static function match(array $attributes, array $rule): bool
     {
         $op = array_shift($rule);
         if ($op === null) {
@@ -128,6 +132,7 @@ class ACL
         }
     }
 
+
     /**
      * 'and' match operator.
      *
@@ -135,7 +140,7 @@ class ACL
      * @param array $rule  The rule we should check.
      * @return boolean  TRUE if the rule matches, FALSE if not.
      */
-    private static function opAnd($attributes, $rule)
+    private static function opAnd(array $attributes, array $rule): bool
     {
         foreach ($rule as $subRule) {
             if (!self::match($attributes, $subRule)) {
@@ -147,6 +152,7 @@ class ACL
         return true;
     }
 
+
     /**
      * 'equals' match operator.
      *
@@ -154,7 +160,7 @@ class ACL
      * @param array $rule  The rule we should check.
      * @return boolean  TRUE if the rule matches, FALSE if not.
      */
-    private static function opEquals($attributes, $rule)
+    private static function opEquals(array $attributes, array $rule): bool
     {
         $attributeName = array_shift($rule);
 
@@ -187,6 +193,7 @@ class ACL
         return true;
     }
 
+
     /**
      * 'equals-preg' match operator.
      *
@@ -194,7 +201,7 @@ class ACL
      * @param array $rule  The rule we should check.
      * @return boolean  TRUE if the rule matches, FALSE if not.
      */
-    private static function opEqualsPreg($attributes, $rule)
+    private static function opEqualsPreg(array $attributes, array $rule): bool
     {
         $attributeName = array_shift($rule);
 
@@ -228,6 +235,7 @@ class ACL
         return true;
     }
 
+
     /**
      * 'has' match operator.
      *
@@ -235,7 +243,7 @@ class ACL
      * @param array $rule  The rule we should check.
      * @return boolean  TRUE if the rule matches, FALSE if not.
      */
-    private static function opHas($attributes, $rule)
+    private static function opHas(array $attributes, array $rule): bool
     {
         $attributeName = array_shift($rule);
 
@@ -255,6 +263,7 @@ class ACL
         return true;
     }
 
+
     /**
      * 'has-preg' match operator.
      *
@@ -262,7 +271,7 @@ class ACL
      * @param array $rule  The rule we should check.
      * @return boolean  TRUE if the rule matches, FALSE if not.
      */
-    private static function opHasPreg($attributes, $rule)
+    private static function opHasPreg(array $attributes, array $rule): bool
     {
         $attributeName = array_shift($rule);
 
@@ -283,6 +292,7 @@ class ACL
         return true;
     }
 
+
     /**
      * 'or' match operator.
      *
@@ -290,7 +300,7 @@ class ACL
      * @param array $rule  The rule we should check.
      * @return boolean  TRUE if the rule matches, FALSE if not.
      */
-    private static function opOr($attributes, $rule)
+    private static function opOr(array $attributes, array $rule): bool
     {
         foreach ($rule as $subRule) {
             if (self::match($attributes, $subRule)) {

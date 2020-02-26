@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\saml\Auth\Process;
 
 use SAML2\Constants;
 use SimpleSAML\Error;
+use Webmozart\Assert\Assert;
 
 /**
  * Authentication processing filter to create an attribute from a NameID.
@@ -35,10 +38,9 @@ class NameIDAttribute extends \SimpleSAML\Auth\ProcessingFilter
      * @param array $config Configuration information about this filter.
      * @param mixed $reserved For future use.
      */
-    public function __construct($config, $reserved)
+    public function __construct(array $config, $reserved)
     {
         parent::__construct($config, $reserved);
-        assert(is_array($config));
 
         if (isset($config['attribute'])) {
             $this->attribute = (string) $config['attribute'];
@@ -64,10 +66,8 @@ class NameIDAttribute extends \SimpleSAML\Auth\ProcessingFilter
      *
      * @throws \SimpleSAML\Error\Exception if the replacement is invalid.
      */
-    private static function parseFormat($format)
+    private static function parseFormat(string $format): array
     {
-        assert(is_string($format));
-
         $ret = [];
         $pos = 0;
         while (($next = strpos($format, '%', $pos)) !== false) {
@@ -108,18 +108,17 @@ class NameIDAttribute extends \SimpleSAML\Auth\ProcessingFilter
      * @param array &$state The request state.
      * @return void
      */
-    public function process(&$state)
+    public function process(array &$state): void
     {
-        assert(is_array($state));
-        assert(isset($state['Source']['entityid']));
-        assert(isset($state['Destination']['entityid']));
+        Assert::keyExists($state['Source'], 'entityid');
+        Assert::keyExists($state['Destination'], 'entityid');
 
         if (!isset($state['saml:sp:NameID'])) {
             return;
         }
 
         $rep = $state['saml:sp:NameID'];
-        assert(!is_null($rep->getValue()));
+        Assert::notNull($rep->getValue());
         $rep->{'%'} = '%';
         if ($rep->getFormat() !== null) {
             $rep->setFormat(Constants::NAMEID_UNSPECIFIED);

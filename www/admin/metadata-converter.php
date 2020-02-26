@@ -2,6 +2,8 @@
 
 require_once('../_include.php');
 
+use Symfony\Component\VarExporter\VarExporter;
+
 // make sure that the user has admin access rights
 \SimpleSAML\Utils\Auth::requireAdmin();
 
@@ -20,8 +22,6 @@ if (!empty($xmldata)) {
     // get all metadata for the entities
     foreach ($entities as &$entity) {
         $entity = [
-            'shib13-sp-remote'  => $entity->getMetadata1xSP(),
-            'shib13-idp-remote' => $entity->getMetadata1xIdP(),
             'saml20-sp-remote'  => $entity->getMetadata20SP(),
             'saml20-idp-remote' => $entity->getMetadata20IdP(),
         ];
@@ -42,7 +42,7 @@ if (!empty($xmldata)) {
             unset($entityMetadata['entityDescriptor']);
 
             $text .= '$metadata[' . var_export($entityId, true) . '] = ' .
-                var_export($entityMetadata, true) . ";\n";
+                VarExporter::export($entityMetadata) . ";\n";
         }
         $entities = $text;
     }

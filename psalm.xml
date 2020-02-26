@@ -4,15 +4,11 @@
     useDocblockTypes="true"
     totallyTyped="false"
     hideExternalErrors="true"
-    allowCoercionFromStringToClassConst="true"
     allowStringToStandInForClass="true"
 >
     <projectFiles>
         <directory name="lib/SimpleSAML" />
 
-        <!-- Replaces all modules/... with this one-liner for 2.0
-        <directory name="modules" />
-        -->
         <directory name="modules/admin" />
         <directory name="modules/core" />
         <directory name="modules/cron" />
@@ -23,17 +19,8 @@
 
         <directory name="tests" />
 
-        <!-- Ignore deprecated classes -->
+        <!-- Ignore certain directories -->
         <ignoreFiles>
-            <file name="lib/SimpleSAML/Auth/DefaultAuth.php" />
-            <file name="lib/SimpleSAML/Auth/TimeLimitedToken.php" />
-            <file name="lib/SimpleSAML/Utilities.php" />
-
-            <!-- Ignore deprecated PHP-templates - Remove for 2.0 -->
-            <file name="modules/**/templates/*.tpl.php" />
-            <file name="modules/saml/templates/proxy/*.tpl.php" />
-            <file name="modules/saml/templates/sp/*.tpl.php" />
-
             <directory name="vendor" />
         </ignoreFiles>
     </projectFiles>
@@ -62,13 +49,6 @@
         <DocblockTypeContradiction errorLevel="suppress" />
         <RedundantConditionGivenDocblockType errorLevel="suppress" />
 
-        <!-- See #1141 -->
-        <MissingDependency>
-            <errorLevel type="suppress">
-                <file name="lib/SimpleSAML/HTTP/Router.php" />
-            </errorLevel>
-        </MissingDependency>
-
         <!-- Ignore UnresolvableInclude on CLI-scripts -->
         <UnresolvableInclude>
             <errorLevel type="suppress">
@@ -95,6 +75,13 @@
                 <directory name="tests" />
             </errorLevel>
         </PropertyNotSetInConstructor>
+
+        <!-- Suppress PHPunit-issue -->
+        <InternalMethod>
+            <errorLevel type="suppress">
+                <directory name="tests" />
+            </errorLevel>
+        </InternalMethod>
     </issueHandlers>
 
     <stubs>

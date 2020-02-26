@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Test\Web;
 
 use PHPUnit\Framework\TestCase;
@@ -30,7 +32,7 @@ class RouterTest extends TestCase
                 foreach ($files as $file) {
                     if (preg_match('/.(yml|yaml)$/', $file)) {
                         try {
-                            $value = $yaml->parse(file_get_contents('modules/' . $module . '/' . $file));
+                            $yaml->parse(file_get_contents('modules/' . $module . '/' . $file));
                             $this->addToAssertionCount(1);
                         } catch (ParseException $e) {
                             $this->fail($e->getMessage() . ' in ' . $e->getFile() . ':' . $e->getLine());

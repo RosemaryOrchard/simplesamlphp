@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Test\Module\core\Auth;
 
 use SAML2\Constants;
@@ -27,10 +29,6 @@ class UserPassBaseTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['login'])
             ->getMockForAbstractClass();
 
-        /**
-         * @psalm-suppress InvalidArgument   Remove when PHPunit 8 is in place
-         * @psalm-suppress UndefinedMethod
-         */
         $stub->expects($this->once())
             ->method('login')
             ->with($username, $password)
@@ -85,7 +83,6 @@ class UserPassBaseTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->getMockForAbstractClass();
 
-        /** @psalm-suppress UndefinedMethod   Remove when Psalm 3.x is in place */
         $stub->authenticate($state);
     }
 
@@ -111,10 +108,6 @@ class UserPassBaseTest extends \PHPUnit\Framework\TestCase
             ->setMethods(['login'])
             ->getMockForAbstractClass();
 
-        /**
-         * @psalm-suppress InvalidArgument   Remove when PHPunit 8 is in place
-         * @psalm-suppress UndefinedMethod
-         */
         $stub->expects($this->once())
             ->method('login')
             ->with($forcedUsername, $password)

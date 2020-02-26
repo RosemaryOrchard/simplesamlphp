@@ -6,6 +6,15 @@ SimpleSAMLphp changelog
 This document lists the changes between versions of SimpleSAMLphp.
 See the upgrade notes for specific information about upgrading.
 
+## Version 2.0.0
+
+  * Support for certificate fingerprints was removed
+  * Support for SAML 1.1 was removed
+  * Old-style PHP templates were removed
+  * Old-style dictionaries were removed
+
+Released TBD
+
 ## Version 1.19.0
 
 Released TBD
@@ -13,14 +22,53 @@ Released TBD
   * This version will be the last of the 1.x branch and will provide a migration path to our new
     templating system, routing system, translation system and hooks.
 
+## Version 1.18.4
+
+Released 2020-01-24
+
+  * Resolved a security issue in email reports. See
+    [SSPSA 202001-01](https://simplesamlphp.org/security/202001-01).
+  * Resolved a security issue with the logging system. See
+    [SSPSA 202001-02](https://simplesamlphp.org/security/202001-02).
+  * Fixed SQL store index creation for PostgreSQL.
+  * Handle case where cookie 'domain' parameter was not set.
+  * Update versions of included JavaScript dependencies.
+
+## Version 1.18.3
+
+Released 2019-12-09
+
+  * Fixed an issue with several modules being enabled by default (#1257).
+  * Fixed an issue with metadata generation for trusted entities (#1247, #1251).
+
+### ldap
+  * Fixed an issue affecting the installation in case-insensitive file systems (#1253).
+
+## Version 1.18.2
+
+Released 2019-11-26
+
+  * Fixed an issue with the `ldap` module that prevented installing SimpleSAMLphp from the repository (#1241).
+
+ ## Version 1.18.1
+ 
+Released 2019-11-26
+ 
+   * Fixed an issue that prevented custom themes from working (#1240).
+   * Fixed an issue with translations in the discovery service (#1244).
+   * Fixed an issue with schema validation.
+
 ## Version 1.18.0
 
-Released 2019-09-xx
+Released 2019-11-19
 
   * Fixed an issue with warnings being logged when using PHP 7.2 or newer (#1168).
   * Fixed an issue with web server aliases or rewritten URLs not working (#1023, #1093).
   * Fixed an issue that prevented errors to be logged if the log file was not writeable (#1194).
-  * Replace custom Email class with the phpmailer library.
+  * Fixed an issue with old-style NameIDPolicy configurations that disallowed creating new NameIDs (#1230).
+  * Resolved a security issue that exposed host information to unauthenticated users. See
+    [SSPSA 201911-02](https://simplesamlphp.org/security/201911-02).
+  * Replaced custom Email class with the phpmailer library.
   * Allow logging to STDERR in the `logging.handler` option by setting it to `stderr`.
   * Allow use of stream wrappers (e.g. s3://) in paths.
   * Improved 'update or insert' handling for different SQL drivers.
@@ -40,6 +88,18 @@ Released 2019-09-xx
   * New SP metadata configuration options `AssertionConsumerService` and `SingleLogoutServiceLocation`
     to allow overriding the default URL paths.
   * Added support for per-IDP configurable `AuthnContextClassRef`/`AuthnContextComparison`.
+
+## Version 1.17.8
+
+Released 2019-11-20
+
+  * Resolved a security issue that exposed host information to unauthenticated users. See
+    [SSPSA 201911-02](https://simplesamlphp.org/security/201911-02).
+
+### consentAdmin
+
+  * Fixed an issue with CSS and Javascript not loading for the module in the new user
+    interface.
 
 ## Version 1.17.7
 

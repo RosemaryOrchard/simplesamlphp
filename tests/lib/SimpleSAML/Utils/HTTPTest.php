@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Test\Utils;
 
 use PHPUnit\Framework\TestCase;
@@ -15,7 +17,7 @@ class HTTPTest extends ClearStateTestCase
      * @param string $url The URL to use as the current one.
      * @return void
      */
-    private function setupEnvFromURL($url)
+    private function setupEnvFromURL(string $url)
     {
         $addr = parse_url($url);
         $_SERVER['HTTP_HOST'] = $addr['host'];
@@ -32,32 +34,6 @@ class HTTPTest extends ClearStateTestCase
             $_SERVER['SERVER_PORT'] = strval($addr['port']);
         }
         $_SERVER['REQUEST_URI'] = $addr['path'] . '?' . $addr['query'];
-    }
-
-
-    /**
-     * Test SimpleSAML\Utils\HTTP::addURLParameters().
-     * @return void
-     * @psalm-suppress InvalidArgument
-     * @deprecated Can be removed in 2.0 when codebase if fully typehinted
-     */
-    public function testAddURLParametersInvalidURL()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        HTTP::addURLParameters([], []);
-    }
-
-
-    /**
-     * Test SimpleSAML\Utils\HTTP::addURLParameters().
-     * @return void
-     * @psalm-suppress InvalidArgument
-     * @deprecated Can be removed in 2.0 when codebase if fully typehinted
-     */
-    public function testAddURLParametersInvalidParameters()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        HTTP::addURLParameters('string', 'string');
     }
 
 
@@ -497,14 +473,14 @@ class HTTPTest extends ClearStateTestCase
         );
 
         $headers = xdebug_get_headers();
-        $this->assertContains('TestCookie=value%2520;', $headers[0]);
+        $this->assertStringContainsString('TestCookie=value%2520;', $headers[0]);
         $this->assertRegExp('/\b[Ee]xpires=[Tt]ue/', $headers[0]);
         $this->assertRegExp('/\b[Pp]ath=\/ourPath(;|$)/', $headers[0]);
         $this->assertRegExp('/\b[Dd]omain=example.com(;|$)/', $headers[0]);
         $this->assertRegExp('/\b[Ss]ecure(;|$)/', $headers[0]);
         $this->assertRegExp('/\b[Hh]ttp[Oo]nly(;|$)/', $headers[0]);
 
-        $this->assertContains('RawCookie=value%20;', $headers[1]);
+        $this->assertStringContainsString('RawCookie=value%20;', $headers[1]);
         $this->assertRegExp('/\b[Ee]xpires=([Mm]on|[Tt]ue|[Ww]ed|[Tt]hu|[Ff]ri|[Ss]at|[Ss]un)/', $headers[1]);
         $this->assertRegExp('/\b[Pp]ath=\/ourPath(;|$)/', $headers[1]);
         $this->assertRegExp('/\b[Dd]omain=example.com(;|$)/', $headers[1]);

@@ -7,6 +7,7 @@ stages:
   - pre-conditions
   - test
   - quality
+  - build
 
 
 ################
@@ -14,18 +15,15 @@ stages:
 ################
 
 php:
-  - 5.6
-  - 7.0
-  - 7.1
   - 7.2
   - 7.3
+  - 7.4
 
 env:
   - COMMAND="composer install"
   - COMMAND="composer update"
 
 before_script:
-  - pecl install krb5
   - ${COMMAND}
 
 script:
@@ -34,13 +32,13 @@ script:
 jobs:
   fast_finish: true
   allow_failures:
-    - php: 5.6
+    - php: 7.3
       env: Psalm
-    - php: 5.6
+    - php: 7.3
       env: Security check (composer install)
-    - php: 5.6
+    - php: 7.3
       env: Security check (composer update)
-    - php: 5.6
+    - php: 7.3
       env: PHP Codesniffer
 
   include:
@@ -48,30 +46,6 @@ jobs:
     ##########################
     #  Pre-conditions stage  #
     ##########################
-
-    - stage: pre-conditions
-      php: 5.6
-      env: Syntax check PHP
-      before_script:
-        - composer install
-      script:
-        - vendor/bin/check-syntax-php.sh
-
-    - stage: pre-conditions
-      php: 7.0
-      env: Syntax check PHP
-      before_script:
-        - composer install
-      script:
-        - vendor/bin/check-syntax-php.sh
-
-    - stage: pre-conditions
-      php: 7.1
-      env: Syntax check PHP
-      before_script:
-        - composer install
-      script:
-        - vendor/bin/check-syntax-php.sh
 
     - stage: pre-conditions
       php: 7.2
@@ -83,6 +57,14 @@ jobs:
 
     - stage: pre-conditions
       php: 7.3
+      env: Syntax check PHP
+      before_script:
+        - composer install
+      script:
+        - vendor/bin/check-syntax-php.sh
+
+    - stage: pre-conditions
+      php: 7.4
       env: Syntax check PHP
       before_script:
         - composer install
@@ -104,6 +86,7 @@ jobs:
     ###################
 
     - stage: quality
+      php: 7.3
       env: Security check (composer install)
       before_script:
         - composer install
@@ -111,6 +94,7 @@ jobs:
         - vendor/bin/security-checker security:check
 
     - stage: quality
+      php: 7.3
       env: Security check (composer update)
       before_script:
         - composer update
@@ -118,32 +102,42 @@ jobs:
         - vendor/bin/security-checker security:check
 
     - stage: quality
-      php: 7.2
+      php: 7.3
       env: Codecov
       before_script:
         - composer update
         - php vendor/bin/phpunit
       script:
-        # Codecov, need to edit bash uploader for incorrect TRAVIS_PYTHON_VERSION environment variable matching, at least until codecov/codecov-bash#133 is resolved
-        - curl -s https://codecov.io/bash > .codecov
-        - sed -i -e 's/TRAVIS_.*_VERSION/^TRAVIS_.*_VERSION=/' .codecov
-        - chmod +x .codecov
-        - ./.codecov -X gcov
-        # - <(curl -s https://codecov.io/bash)
+        - bash <(curl -s https://codecov.io/bash)
 
     - stage: quality
+      php: 7.3
       env: Psalm
       before_script:
         - composer update
       script:
         - vendor/bin/psalm
+        - vendor/bin/psalter --issues=UnnecessaryVarAnnotation --dry-run
 
     - stage: quality
+      php: 7.3
       env: PHP Codesniffer
       before_script:
         - composer update
       script:
         - vendor/bin/phpcs
+
+    ###################
+    #  Quality stage  #
+    ###################
+
+    - stage: build
+      env: NPM build
+      before_script:
+        - npm install
+        - npm audit fix
+      script:
+        - npm run build
 
 notifications:
   slack:

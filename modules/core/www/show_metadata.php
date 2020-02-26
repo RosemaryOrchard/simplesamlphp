@@ -15,7 +15,7 @@ if (!array_key_exists('set', $_REQUEST)) {
 if (
     !in_array(
         $_REQUEST['set'],
-        ['saml20-idp-remote', 'saml20-sp-remote', 'shib13-idp-remote', 'shib13-sp-remote'],
+        ['saml20-idp-remote', 'saml20-sp-remote'],
         true
     )
 ) {
@@ -26,7 +26,7 @@ $metadata = \SimpleSAML\Metadata\MetaDataStorageHandler::getMetadataHandler();
 
 $m = $metadata->getMetaData($_REQUEST['entityid'], $_REQUEST['set']);
 
-$t = new \SimpleSAML\XHTML\Template($config, 'core:show_metadata.tpl.php');
+$t = new \SimpleSAML\XHTML\Template($config, 'core:show_metadata.twig');
 $t->data['clipboard.js'] = true;
 $t->data['pageid'] = 'show_metadata';
 $t->data['header'] = 'SimpleSAMLphp Show Metadata';
@@ -36,4 +36,4 @@ $t->data['entityid'] = $m['metadata-index'];
 unset($m['metadata-index']);
 $t->data['metadata'] = var_export($m, true);
 
-$t->show();
+$t->send();

@@ -32,17 +32,16 @@ $allLinks = [
 ];
 \SimpleSAML\Module::callHooks('frontpage', $allLinks);
 
-$t = new \SimpleSAML\XHTML\Template($config, 'core:frontpage_auth.tpl.php');
+$t = new \SimpleSAML\XHTML\Template($config, 'core:frontpage_auth.twig');
 $t->data['pageid'] = 'frontpage_auth';
 $t->data['isadmin'] = $isadmin;
 $t->data['loginurl'] = $loginurl;
 $t->data['logouturl'] = $logouturl;
 
-$t->data['header'] = $t->getTranslator()->t('{core:frontpage:page_title}');
 $t->data['links'] = $links;
 $t->data['links_welcome'] = $links_welcome;
 $t->data['links_config'] = $links_config;
 $t->data['links_auth'] = $links_auth;
 $t->data['links_federation'] = $links_federation;
 
-$t->show();
+$t->send();

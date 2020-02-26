@@ -95,7 +95,6 @@ if ($config->getBoolean('admin.checkforupdates', true) && $current !== 'master')
 
 $enablematrix = [
     'saml20idp' => $config->getBoolean('enable.saml20-idp', false),
-    'shib13idp' => $config->getBoolean('enable.shib13-idp', false),
 ];
 
 
@@ -123,8 +122,8 @@ if (\SimpleSAML\Module::isModuleEnabled('radius')) {
 $funcmatrix = [];
 $funcmatrix[] = [
     'required' => 'required',
-    'descr' => 'PHP Version >= 5.6. You run: ' . phpversion(),
-    'enabled' => version_compare(phpversion(), '5.6', '>=')
+    'descr' => 'PHP Version >= 7.2. You run: ' . phpversion(),
+    'enabled' => version_compare(phpversion(), '7.2', '>=')
 ];
 foreach ($functionchecks as $func => $descr) {
     $funcmatrix[] = ['descr' => $descr[1], 'required' => $descr[0], 'enabled' => function_exists($func)];
@@ -165,7 +164,7 @@ $funcmatrix[] = [
     'enabled' => $password_ok
 ];
 
-$t = new \SimpleSAML\XHTML\Template($config, 'core:frontpage_config.tpl.php');
+$t = new \SimpleSAML\XHTML\Template($config, 'core:frontpage_config.twig');
 $translator = $t->getTranslator();
 $t->data['pageid'] = 'frontpage_config';
 $t->data['header'] = $translator->t('{core:frontpage:page_title}');
@@ -200,4 +199,4 @@ $t->data['requiredmap'] = [
 $t->data['version'] = $config->getVersion();
 $t->data['directory'] = dirname(dirname(dirname(dirname(__FILE__))));
 
-$t->show();
+$t->send();

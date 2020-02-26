@@ -1,12 +1,14 @@
 <?php
 
+use Webmozart\Assert\Assert;
+
 $config = \SimpleSAML\Configuration::getInstance();
 
 if (!array_key_exists('as', $_REQUEST)) {
-    $t = new \SimpleSAML\XHTML\Template($config, 'core:authsource_list.tpl.php');
+    $t = new \SimpleSAML\XHTML\Template($config, 'core:authsource_list.twig');
 
     $t->data['sources'] = \SimpleSAML\Auth\Source::getSources();
-    $t->show();
+    $t->send();
     exit();
 }
 
@@ -23,9 +25,9 @@ if (array_key_exists(\SimpleSAML\Auth\State::EXCEPTION_PARAM, $_REQUEST)) {
     /** @var array $state */
     $state = \SimpleSAML\Auth\State::loadExceptionState();
 
-    assert(array_key_exists(\SimpleSAML\Auth\State::EXCEPTION_DATA, $state));
-    $e = $state[\SimpleSAML\Auth\State::EXCEPTION_DATA];
+    Assert::keyExists($state, \SimpleSAML\Auth\State::EXCEPTION_DATA);
 
+    $e = $state[\SimpleSAML\Auth\State::EXCEPTION_DATA];
     throw $e;
 }
 
@@ -48,4 +50,4 @@ $t->data['attributes'] = $attributes;
 $t->data['authData'] = $authData;
 $t->data['nameid'] = !is_null($as->getAuthData('saml:sp:NameID')) ? $as->getAuthData('saml:sp:NameID') : false;
 $t->data['logouturl'] = \SimpleSAML\Utils\HTTP::getSelfURLNoQuery() . '?as=' . urlencode($asId) . '&logout';
-$t->show();
+$t->send();

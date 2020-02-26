@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Test\Utils;
 
 use PHPUnit\Framework\TestCase;
@@ -135,30 +137,6 @@ class TimeTest extends TestCase
             Time::parseDuration('PT1M'),
             "Failure testing for 1 minute over current time."
         );
-
-        // test invalid input parameters
-        try {
-            // invalid duration
-            /**
-             * @deprecated This test becomes useless as soon as the codebase is fully typehinted
-             * @psalm-suppress InvalidScalarArgument
-             */
-            Time::parseDuration(0);
-            $this->fail("Did not fail with invalid duration parameter.");
-        } catch (\InvalidArgumentException $e) {
-            $this->assertEquals('Invalid input parameters', $e->getMessage());
-        }
-        try {
-            // invalid timestamp
-            /**
-             * @deprecated This test becomes useless as soon as the codebase is fully typehinted
-             * @psalm-suppress InvalidArgument
-             */
-            Time::parseDuration('', []);
-            $this->fail("Did not fail with invalid timestamp parameter.");
-        } catch (\InvalidArgumentException $e) {
-            $this->assertEquals('Invalid input parameters', $e->getMessage());
-        }
 
         // test invalid durations
         try {

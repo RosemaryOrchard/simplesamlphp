@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Test\Store;
 
 use PHPUnit\Framework\TestCase;
+use ReflectionClass;
 use SimpleSAML\Configuration;
 use SimpleSAML\Store;
 
@@ -20,7 +23,7 @@ class SQLTest extends TestCase
     /**
      * @return void
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         Configuration::loadFromArray([
             'store.type'                    => 'sql',
@@ -40,7 +43,7 @@ class SQLTest extends TestCase
     {
         $store = Store::getInstance();
 
-        $this->assertInstanceOf('SimpleSAML\Store\SQL', $store);
+        $this->assertInstanceOf(Store\SQL::class, $store);
     }
 
 
@@ -196,25 +199,26 @@ class SQLTest extends TestCase
     /**
      * @return void
      */
-    protected function tearDown()
+    protected function tearDown(): void
     {
         $config = Configuration::getInstance();
+
         /** @var \SimpleSAML\Store\SQL $store */
         $store = Store::getInstance();
 
-        $this->clearInstance($config, '\SimpleSAML\Configuration');
-        $this->clearInstance($store, '\SimpleSAML\Store');
+        $this->clearInstance($config, Configuration::class);
+        $this->clearInstance($store, Store::class);
     }
 
 
     /**
      * @param \SimpleSAML\Configuration|\SimpleSAML\Store $service
-     * @param string $className
+     * @param class-string $className
      * @return void
      */
     protected function clearInstance($service, $className)
     {
-        $reflectedClass = new \ReflectionClass($className);
+        $reflectedClass = new ReflectionClass($className);
         $reflectedInstance = $reflectedClass->getProperty('instance');
         $reflectedInstance->setAccessible(true);
         $reflectedInstance->setValue($service, null);

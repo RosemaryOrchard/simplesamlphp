@@ -1,9 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Test\Utils\Config;
 
+use DOMDocument;
 use PHPUnit\Framework\TestCase;
 use SimpleSAML\Utils\Config\Metadata;
+use TypeError;
 
 /**
  * Tests related to SAML metadata.
@@ -16,14 +20,6 @@ class MetadataTest extends TestCase
      */
     public function testGetContact()
     {
-        // test invalid argument
-        try {
-            /** @psalm-suppress InvalidArgument   May be removed in 2.0 when codebase is fully typehinted */
-            Metadata::getContact('string');
-        } catch (\InvalidArgumentException $e) {
-            $this->assertEquals('Invalid input parameters', $e->getMessage());
-        }
-
         // test missing type
         $contact = [
             'name' => 'John Doe'
@@ -242,8 +238,17 @@ class MetadataTest extends TestCase
         ];
         $this->assertTrue(Metadata::isHiddenFromDiscovery($metadata));
 
+        // test for failure
+        $this->assertFalse(Metadata::isHiddenFromDiscovery([
+            'EntityAttributes' => [
+                Metadata::$ENTITY_CATEGORY => [],
+            ],
+        ]));
+
         // test for failures
-        $this->assertFalse(Metadata::isHiddenFromDiscovery(['foo']));
+        $this->expectException(TypeError::class);
+        Metadata::isHiddenFromDiscovery(['foo']);
+
         $this->assertFalse(Metadata::isHiddenFromDiscovery([
             'EntityAttributes' => 'bar',
         ]));
@@ -255,14 +260,9 @@ class MetadataTest extends TestCase
                 Metadata::$ENTITY_CATEGORY => '',
             ],
         ]));
-        $this->assertFalse(Metadata::isHiddenFromDiscovery([
-            'EntityAttributes' => [
-                Metadata::$ENTITY_CATEGORY => [],
-            ],
-        ]));
     }
 
-    
+
     /**
      * Test \SimpleSAML\Utils\Config\Metadata::parseNameIdPolicy().
      * @return void
@@ -272,7 +272,7 @@ class MetadataTest extends TestCase
         // Test null or unset
         $nameIdPolicy = null;
         $this->assertEquals(
-            ['Format' => \SAML2\Constants::NAMEID_TRANSIENT],
+            ['Format' => \SAML2\Constants::NAMEID_TRANSIENT, 'AllowCreate' => true],
             Metadata::parseNameIdPolicy($nameIdPolicy)
         );
 
@@ -283,7 +283,7 @@ class MetadataTest extends TestCase
         // Test string
         $nameIdPolicy = 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress';
         $this->assertEquals(
-            ['Format' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress'],
+            ['Format' => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress', 'AllowCreate' => true],
             Metadata::parseNameIdPolicy($nameIdPolicy)
         );
 

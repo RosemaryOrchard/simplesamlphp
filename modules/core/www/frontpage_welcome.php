@@ -33,7 +33,7 @@ $links_welcome[] = [
 
 \SimpleSAML\Module::callHooks('frontpage', $allLinks);
 
-$t = new \SimpleSAML\XHTML\Template($config, 'core:frontpage_welcome.tpl.php');
+$t = new \SimpleSAML\XHTML\Template($config, 'core:frontpage_welcome.twig');
 $t->data['pageid'] = 'frontpage_welcome';
 $t->data['isadmin'] = $isadmin;
 $t->data['loginurl'] = $loginurl;
@@ -44,6 +44,5 @@ $t->data['links_welcome'] = $links_welcome;
 $t->data['links_config'] = $links_config;
 $t->data['links_auth'] = $links_auth;
 $t->data['links_federation'] = $links_federation;
-$t->data['header'] = $t->getTranslator()->t('{core:frontpage:page_title}');
 
-$t->show();
+$t->send();
