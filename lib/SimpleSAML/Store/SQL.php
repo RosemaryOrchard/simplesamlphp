@@ -54,7 +54,10 @@ class SQL extends Store
     {
         $config = Configuration::getInstance();
 
-        $dsn = $config->getString('store.sql.dsn');
+        $dsn = $config->getArray('store.sql.dsn')['type'] . ':';
+        foreach ($config->getArray('store.sql.dsn')['properties'] as $key => $value) {
+            $dsn .= $key . '=' . $value . ';';
+        }
         $username = $config->getString('store.sql.username', null);
         $password = $config->getString('store.sql.password', null);
         $options = $config->getArray('store.sql.options', null);
@@ -96,7 +99,7 @@ class SQL extends Store
         }
 
         while (($row = $fetchTableVersion->fetch(PDO::FETCH_ASSOC)) !== false) {
-            $this->tableVersions[$row['_name']] = (int) $row['_version'];
+            $this->tableVersions[$row['_name']] = (int)$row['_version'];
         }
     }
 
@@ -131,8 +134,8 @@ class SQL extends Store
                 '_kvstore (_type VARCHAR(30) NOT NULL, _key VARCHAR(50) NOT NULL, _value ' . $text_t .
                 ' NOT NULL, _expire ' . $time_field . ', PRIMARY KEY (_key, _type))',
                 $this->driver === 'sqlite' || $this->driver === 'sqlsrv' || $this->driver === 'pgsql' ?
-                'CREATE INDEX ' . $this->prefix . '_kvstore_expire ON ' . $this->prefix . '_kvstore (_expire)' :
-                'ALTER TABLE ' . $this->prefix . '_kvstore ADD INDEX ' . $this->prefix . '_kvstore_expire (_expire)'
+                    'CREATE INDEX ' . $this->prefix . '_kvstore_expire ON ' . $this->prefix . '_kvstore (_expire)' :
+                    'ALTER TABLE ' . $this->prefix . '_kvstore ADD INDEX ' . $this->prefix . '_kvstore_expire (_expire)'
             ],
             /**
              * This upgrade removes the default NOT NULL constraint on the _expire field in MySQL.
@@ -151,11 +154,11 @@ class SQL extends Store
                 'DROP TABLE ' . $this->prefix . '_kvstore',
                 // FOR MSSQL use EXEC sp_rename to rename a table (RENAME won't work)
                 $this->driver === 'sqlsrv' ?
-                'EXEC sp_rename ' . $this->prefix . '_kvstore_new, ' . $this->prefix . '_kvstore' :
-                'ALTER TABLE ' . $this->prefix . '_kvstore_new RENAME TO ' . $this->prefix . '_kvstore',
+                    'EXEC sp_rename ' . $this->prefix . '_kvstore_new, ' . $this->prefix . '_kvstore' :
+                    'ALTER TABLE ' . $this->prefix . '_kvstore_new RENAME TO ' . $this->prefix . '_kvstore',
                 $this->driver === 'sqlite' || $this->driver === 'sqlsrv' || $this->driver === 'pgsql' ?
-                'CREATE INDEX ' . $this->prefix . '_kvstore_expire ON ' . $this->prefix . '_kvstore (_expire)' :
-                'ALTER TABLE ' . $this->prefix . '_kvstore ADD INDEX ' . $this->prefix . '_kvstore_expire (_expire)'
+                    'CREATE INDEX ' . $this->prefix . '_kvstore_expire ON ' . $this->prefix . '_kvstore (_expire)' :
+                    'ALTER TABLE ' . $this->prefix . '_kvstore ADD INDEX ' . $this->prefix . '_kvstore_expire (_expire)'
             ]
         ];
 
@@ -305,7 +308,7 @@ class SQL extends Store
             $key = sha1($key);
         }
 
-        $query = 'SELECT _value FROM ' . $this->createTableName('_kvstore') .' WHERE _type = :type AND _key = :key AND (_expire IS NULL OR _expire > :now)';
+        $query = 'SELECT _value FROM ' . $this->createTableName('_kvstore') . ' WHERE _type = :type AND _key = :key AND (_expire IS NULL OR _expire > :now)';
         $params = ['type' => $type, 'key' => $key, 'now' => gmdate('Y-m-d H:i:s')];
 
         $query = $this->pdo->prepare($query);
@@ -359,9 +362,9 @@ class SQL extends Store
         $value = rawurlencode($value);
 
         $data = [
-            '_type'   => $type,
-            '_key'    => $key,
-            '_value'  => $value,
+            '_type' => $type,
+            '_key' => $key,
+            '_value' => $value,
             '_expire' => $expire,
         ];
 
@@ -384,7 +387,7 @@ class SQL extends Store
 
         $data = [
             '_type' => $type,
-            '_key'  => $key,
+            '_key' => $key,
         ];
 
         $query = 'DELETE FROM ' . $this->createTableName('_kvstore') . ' WHERE _type=:_type AND _key=:_key';
