@@ -10,6 +10,9 @@ declare(strict_types=1);
 
 namespace SimpleSAML;
 
+use Doctrine\ORM\EntityManagerInterface;
+use SimpleSAML\Session as SimpleSAMLsession;
+use Session;
 use Webmozart\Assert\Assert;
 
 class SessionHandlerStore extends SessionHandlerCookie
@@ -20,6 +23,10 @@ class SessionHandlerStore extends SessionHandlerCookie
      * @var \SimpleSAML\Store
      */
     private $store;
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
 
 
     /**
@@ -27,11 +34,12 @@ class SessionHandlerStore extends SessionHandlerCookie
      *
      * @param \SimpleSAML\Store $store The store to use.
      */
-    protected function __construct(Store $store)
+    protected function __construct(Store $store, EntityManagerInterface $entityManager)
     {
         parent::__construct();
 
         $this->store = $store;
+        $this->entityManager = $entityManager;
     }
 
 
@@ -42,7 +50,7 @@ class SessionHandlerStore extends SessionHandlerCookie
      *
      * @return \SimpleSAML\Session|null The session object, or null if it doesn't exist.
      */
-    public function loadSession(?string $sessionId): ?Session
+    public function loadSession(?string $sessionId): ?SimpleSAMLsession
     {
         if ($sessionId === null) {
             $sessionId = $this->getCookieSessionId();
@@ -51,9 +59,9 @@ class SessionHandlerStore extends SessionHandlerCookie
                 return null;
             }
         }
-
-        $session = $this->store->get('session', $sessionId);
+        $session = $this->entityManager->getRepository(Session::class)->findBy(['sessionId' => $sessionId]);
         if ($session !== null) {
+            $session = unserialize($session);
             Assert::isInstanceOf($session, Session::class);
             return $session;
         }
@@ -65,23 +73,27 @@ class SessionHandlerStore extends SessionHandlerCookie
     /**
      * Save a session to the data store.
      *
-     * @param \SimpleSAML\Session $session The session object we should save.
+     * @param \SimpleSAML\Session $simpleSAMLsession
      * @return void
+     * @throws \Exception
      */
-    public function saveSession(Session $session): void
+    public function saveSession(SimpleSAMLsession $simpleSAMLsession): void
     {
-        if ($session->isTransient()) {
+        if ($simpleSAMLsession->isTransient()) {
             // transient session, nothing to save
             return;
         }
 
-        /** @var string $sessionId */
-        $sessionId = $session->getSessionId();
 
         $config = Configuration::getInstance();
         $sessionDuration = $config->getInteger('session.duration', 8 * 60 * 60);
-        $expire = time() + $sessionDuration;
 
-        $this->store->set('session', $sessionId, $session, $expire);
+        $dbSession = new Session();
+        $dbSession->setSessionId($simpleSAMLsession->getSessionId());
+        $dbSession->setSession($simpleSAMLsession->serialize());
+        $dbSession->setExpiresAt(new \DateTime() + $sessionDuration);
+
+        $this->entityManager->persist($dbSession);
+        $this->entityManager->flush();
     }
 }
